@@ -1,0 +1,29 @@
+<div th:fragment="gridList(games)" xmlns:th="http://www.w3.org/1999/xhtml">
+
+    <div class="game-grid">
+        <div class="game-card"
+             th:each="game : ${games}"
+             th:attr="data-id=${game.id}"
+             onclick="goDetail(this)">
+
+            <div class="game-img-box">
+                <img th:src="${game.thumbnail}"
+                     onerror="this.src='/image/noimage.png'">
+            </div>
+
+            <div class="game-info">
+                <h3 th:text="${game.krName != null ? game.krName : game.name}"></h3>
+                <p class="year" th:text="'(' + ${game.year} + ')'"></p>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function goDetail(el) {
+        const id = el.getAttribute("data-id");
+        location.href = "/games/" + id;
+    }
+</script>

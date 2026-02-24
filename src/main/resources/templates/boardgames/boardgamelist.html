@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainlayout}">
+
+<div layout:fragment="content">
+
+    <link rel="stylesheet" th:href="@{/css/game-list.css}">
+    <link rel="stylesheet" th:href="@{/css/games-filter.css}">
+    <div class="game-list-container">
+
+        <!-- ===================== 상세 옵션 ===================== -->
+        <div class="filter-header">
+            <h2>상세 검색</h2>
+            <button type="button" class="reset-btn" onclick="resetFilters()">초기화</button>
+        </div>
+
+        <form id="filterForm">
+
+            <!-- 카테고리 -->
+            <div class="filter-section">
+                <h3>카테고리</h3>
+                <label><input type="checkbox" name="category" value="전략"> 전략</label>
+                <label><input type="checkbox" name="category" value="가족"> 가족</label>
+                <label><input type="checkbox" name="category" value="파티"> 파티</label>
+                <label><input type="checkbox" name="category" value="추상"> 추상</label>
+                <label><input type="checkbox" name="category" value="어린이"> 어린이</label>
+            </div>
+
+            <!-- 테마 -->
+            <div class="filter-section">
+                <h3>테마</h3>
+                <label><input type="checkbox" name="theme" value="동물"> 동물</label>
+                <label><input type="checkbox" name="theme" value="판타지"> 판타지</label>
+                <label><input type="checkbox" name="theme" value="SF"> SF</label>
+                <label><input type="checkbox" name="theme" value="경제"> 경제</label>
+                <label><input type="checkbox" name="theme" value="전쟁"> 전쟁</label>
+                <label><input type="checkbox" name="theme" value="모험"> 모험</label>
+            </div>
+
+            <!-- 언어 의존도 -->
+            <div class="filter-section">
+                <h3>언어 의존도</h3>
+                <label><input type="checkbox" name="language" value="텍스트 없음"> 텍스트 없음</label>
+                <label><input type="checkbox" name="language" value="적음"> 적음</label>
+                <label><input type="checkbox" name="language" value="보통"> 보통</label>
+                <label><input type="checkbox" name="language" value="많음"> 많음</label>
+            </div>
+
+            <!-- 인원 -->
+            <div class="filter-section">
+                <h3>플레이 인원</h3>
+                <label><input type="checkbox" name="minPlayers" value="1"> 1인 가능</label>
+                <label><input type="checkbox" name="minPlayers" value="2"> 2인 가능</label>
+                <label><input type="checkbox" name="minPlayers" value="3"> 3인</label>
+                <label><input type="checkbox" name="minPlayers" value="4"> 4인</label>
+            </div>
+
+            <!-- 시간 -->
+            <div class="filter-section">
+                <h3>플레이 시간</h3>
+                <label><input type="checkbox" name="maxTime" value="30"> 30분 이하</label>
+                <label><input type="checkbox" name="maxTime" value="60"> 60분 이하</label>
+                <label><input type="checkbox" name="maxTime" value="90"> 90분 이하</label>
+                <label><input type="checkbox" name="maxTime" value="120"> 120분 이하</label>
+            </div>
+
+            <!-- 난이도 -->
+            <div class="filter-section">
+                <h3>난이도</h3>
+                <label><input type="checkbox" name="maxWeight" value="2.0"> 2 이하</label>
+                <label><input type="checkbox" name="maxWeight" value="3.0"> 3 이하</label>
+                <label><input type="checkbox" name="maxWeight" value="4.0"> 4 이하</label>
+            </div>
+
+        </form>
+
+
+        <!-- ===================== HEADER ===================== -->
+        <div class="list-header">
+            <h2>전체 보드게임</h2>
+
+            <div class="top-controls">
+                <form action="/games" method="get" class="search-form">
+                    <input type="text" name="keyword" th:value="${keyword}"
+                           placeholder="게임 검색 (한국어 / 영어)"
+                           class="search-input">
+
+                    <input type="hidden" name="sort" th:value="${sort}">
+                    <button type="submit" class="search-btn">검색</button>
+                </form>
+
+                <select id="sortSelect" class="sort-select" onchange="changeSort()">
+                    <option value="rank" th:selected="${sort == 'rank'}">랭킹순</option>
+                    <option value="new" th:selected="${sort == 'new'}">최신순</option>
+                    <option value="old" th:selected="${sort == 'old'}">오래된순</option>
+                    <option value="name" th:selected="${sort == 'name'}">이름순</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ===================== 검색 결과 없음 ===================== -->
+        <div th:if="${games != null and #lists.isEmpty(games)}"
+             style="text-align:center; padding:80px 0; font-size:20px; color:#777;">
+            🔍 검색 결과가 없습니다.
+        </div>
+
+        <!-- ===================== GRID ===================== -->
+        <div id="gamesListArea">
+            <div class="game-grid">
+                <div class="game-card"
+                     th:each="game : ${games}"
+                     th:onclick="|location.href='@{/games/{id}(id=${game.id})}'|">
+
+                    <div class="game-img-box">
+                        <img th:src="${game.thumbnail}"
+                             onerror="this.src='/image/noimage.png'" />
+                    </div>
+
+                    <div class="game-info">
+                        <h3 th:text="${game.krName != null ? game.krName : game.name}"></h3>
+                        <p class="year" th:text="'(' + ${game.year} + ')'"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== PAGINATION ===================== -->
+        <div class="pagination">
+
+            <!-- 이전 버튼 -->
+            <a th:if="${page > 1}"
+               th:href="@{/games(page=${page - 1}, sort=${sort}, keyword=${keyword})}"
+               class="page-btn">이전</a>
+
+            <!-- 페이지 번호들 -->
+            <span class="page-numbers">
+                <a th:each="i : ${#numbers.sequence(1, totalPages)}"
+                   th:href="@{/games(page=${i}, sort=${sort}, keyword=${keyword})}"
+                   th:text="${i}"
+                   th:classappend="${i == page} ? ' active-page' : ''"
+                   class="page-number-btn"></a>
+            </span>
+
+            <!-- 다음 버튼 -->
+            <a th:if="${page < totalPages}"
+               th:href="@{/games(page=${page + 1}, sort=${sort}, keyword=${keyword})}"
+               class="page-btn">다음</a>
+
+        </div>
+
+    </div>
+
+    <script>
+        // 체크박스 변경 → 자동 필터적용
+       document.querySelectorAll("#filterForm input[type='checkbox']")
+           .forEach(cb => cb.addEventListener("change", applyFilter));
+
+       function applyFilter() {
+           const formData = new FormData(document.getElementById("filterForm"));
+           let params = new URLSearchParams(formData);
+
+           fetch("/games/filter-api?" + params.toString())
+               .then(res => res.json())
+               .then(games => renderGameList(games));
+       }
+
+       function resetFilters() {
+           document.querySelectorAll("#filterForm input[type='checkbox']")
+               .forEach(cb => cb.checked = false);
+           applyFilter();
+       }
+
+       function renderGameList(games) {
+           let html = `
+               <div class="game-grid">
+                   ${games.map(g => `
+                       <div class="game-card" onclick="location.href='/games/${g.id}'">
+                           <div class="game-img-box">
+                               <img src="${g.thumbnail}" onerror="this.src='/image/noimage.png'">
+                           </div>
+                           <div class="game-info">
+                               <h3>${g.krName ?? g.name}</h3>
+                               <p class="year">(${g.year})</p>
+                           </div>
+                       </div>
+                   `).join("")}
+               </div>
+           `;
+           document.getElementById("gamesListArea").innerHTML = html;
+       }
+
+       function changeSort() {
+           const sort = document.getElementById("sortSelect").value;
+           window.location.href = "/games?sort=" + sort;
+       }
+    </script>
+
+</div>
+
+</html>

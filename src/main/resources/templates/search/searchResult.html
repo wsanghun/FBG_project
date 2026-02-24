@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainlayout}">
+
+<th:block layout:fragment="content" th:with="pageType='home'">
+    <link rel="stylesheet" th:href="@{/css/search.css}" />
+
+    <div class="search-container">
+
+        <h2 class="search-title"
+            th:text="'검색 결과 : ' + ${keyword}">
+            검색 결과
+        </h2>
+
+        <!-- ===========================
+                🔥 보드게임 검색 결과
+        ============================ -->
+        <h3 class="category-title">보드게임</h3>
+
+        <div th:if="${#lists.isEmpty(gameResults)}">
+            검색된 보드게임이 없습니다.
+        </div>
+
+        <div class="game-result-list">
+            <div class="game-card"
+                 th:each="g : ${gameResults}"
+                 th:onclick="'location.href=\'' + @{/games/{id}(id=${g.id})} + '\''">
+
+                <img th:src="${g.thumbnail}"
+                     onerror="this.onerror=null; this.src='/image/noimage.png';">
+
+                <div class="game-name"
+                     th:text="${g.krName != null ? g.krName : g.name}">
+                    게임명
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ===========================
+                🔥 게시글 검색 결과
+        ============================ -->
+        <h3 class="category-title">게시글</h3>
+
+        <div th:if="${#lists.isEmpty(boardResults)}">
+            검색된 게시글이 없습니다.
+        </div>
+
+        <div class="board-result-list">
+            <div class="board-item"
+                 th:each="b : ${boardResults}">
+                <a th:href="@{/board/view(idx=${b.idx})}"
+                   th:text="${b.title}">
+                    게시글 제목
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</th:block>
+
+</html>

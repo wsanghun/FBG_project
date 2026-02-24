@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainlayout}">
+
+<th:block layout:fragment="content" th:with="pageType='home'">
+    <style>
+        body {
+            /*bgimage.png 파일 경로: /image/bgimage.png */
+            background-image: url("/image/bgimage.jpg");
+            background-size: cover;          /* 화면을 꽉 채우도록 설정 */
+            background-position: center;     /* 이미지를 중앙에 배치 */
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+    <div class="modify-container">
+        <div class="modify-form">
+            <img src="/image/logo.png" alt="Find Board Game 로고" class="logo-image">
+
+            <h2 class="form-title">회원 정보 수정</h2>
+
+            <form name="modify_form" th:action="@{/user/modifyProcess}" method="POST" th:object="${dto}">
+
+                <input type="hidden" th:field="*{idx}">
+
+                <div class="input-group">
+                    <label for="userid">아이디</label>
+                    <input type="text" id="userid" th:field="*{userid}" readonly style="background-color: #eee;">
+                </div>
+
+                <div class="input-group">
+                    <label for="userpwd">새 비밀번호</label>
+                    <input type="password" id="userpwd" th:field="*{userpwd}" placeholder="새 비밀번호 (입력하지 않으면 변경 안 됨)">
+                    <span id="pwd_result" style="font-size: 0.8em;"></span>
+                </div>
+
+                <div class="input-group">
+                    <label for="userpwds">비밀번호 확인</label>
+                    <input type="password" id="userpwds" name="userpwds" placeholder="새 비밀번호를 다시 입력하세요.">
+                    <span id="pwds_result" style="font-size: 0.8em;"></span>
+                </div>
+
+                <div class="input-group">
+                    <label for="name">이름</label>
+                    <input type="text" id="name" th:field="*{name}" required>
+                </div>
+
+                <div class="input-group">
+                    <label>성별</label>
+                    <div class="gender-options"> <label>
+                        <input type="radio" th:field="*{gender}" value="m"> 남
+                    </label>
+                        <label>
+                            <input type="radio" th:field="*{gender}" value="f"> 여
+                        </label>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>이메일</label>
+                    <div class="email-input">
+                        <input type="text" id="emailprefix" th:field="*{emailprefix}" required>
+                        <span>@</span>
+                        <input type="text" id="emaildomain" th:field="*{emaildomain}" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>* 생년월일</label>
+                    <div class="birth-selects">
+                        <select th:field="*{yy}">
+                            <option value="">년도</option>
+                            <th:block th:with="currentYear=${#dates.year(#dates.createNow())}">
+                                <th:block th:each="y : ${#numbers.sequence(1950, currentYear)}">
+                                    <option th:value="${y}" th:text="${y}"></option>
+                                </th:block>
+                            </th:block>
+                        </select>
+
+                        <select th:field="*{mm}">
+                            <option value="">월</option>
+                            <th:block th:each="m : ${#numbers.sequence(1,12)}">
+                                <option th:value="${m < 10 ? '0' + m : m}" th:text="${m < 10 ? '0' + m : m}"></option>
+                            </th:block>
+                        </select>
+
+                        <select th:field="*{dd}">
+                            <option value="">일</option>
+                            <th:block th:each="d : ${#numbers.sequence(1,31)}">
+                                <option th:value="${d < 10 ? '0' + d : d}" th:text="${d < 10 ? '0' + d : d}"></option>
+                            </th:block>
+                        </select>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary" onclick="return validateForm()">수정</button>
+                    <button type="button" class="btn btn-list" onclick="history.back()">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 기존의 JS 코드를 여기에 삽입하여 비밀번호 유효성 검사를 유지합니다.
+        // (check_pwd 함수와 validateForm 함수를 복사하여 붙여넣어 주세요.)
+
+        $(document).ready(function() {
+            // 비밀번호 입력 및 확인 시 실시간 검사
+            $('#userpwd, #userpwds').on('keyup blur', function() {
+                check_pwd();
+            });
+        });
+
+        function check_pwd() {
+            var pwd = $('#userpwd').val();
+            var pwds = $('#userpwds').val();
+            var pwdResult = $('#pwd_result');
+            var pwdsResult = $('#pwds_result');
+            var passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,16}$/;
+
+            // 1. 새 비밀번호 입력 필드 검사
+            if (pwd.length > 0) {
+                if (passwordRegex.test(pwd)) {
+                    pwdResult.html("<font color='blue'>사용 가능합니다.</font>");
+                } else {
+                    pwdResult.html("<font color='red'>8~16자, 영문자, 숫자, 특수 문자를 포함해야 합니다.</font>");
+                }
+            } else {
+                // 비밀번호를 입력하지 않으면 변경하지 않는 것으로 간주
+                pwdResult.html("<font color='white'>비밀번호를 입력하지 않으면 변경되지 않습니다.</font>");
+            }
+
+            // 2. 비밀번호 확인 필드 일치 여부 검사
+            if (pwd.length > 0 || pwds.length > 0) {
+                if (pwd === pwds) {
+                    pwdsResult.html("<font color='blue'>비밀번호가 일치합니다.</font>");
+                } else {
+                    pwdsResult.html("<font color='red'>비밀번호가 일치하지 않습니다.</font>");
+                }
+            } else {
+                pwdsResult.html("");
+            }
+        }
+
+        function validateForm() {
+            var form = document.modify_form;
+
+            // 새 비밀번호 유효성 및 일치 여부 체크
+            if ($('#userpwd').val().length > 0 || $('#userpwds').val().length > 0) {
+                var pwdMsg = $('#pwd_result').text();
+                var pwdsMsg = $('#pwds_result').text();
+
+                if (pwdMsg.includes("사용 가능") === false) {
+                    alert("새 비밀번호 조건을 확인해주세요.");
+                    $('#userpwd').focus();
+                    return false;
+                }
+
+                if (pwdsMsg.includes("일치합니다") === false) {
+                    alert("새 비밀번호 확인이 일치하지 않습니다.");
+                    $('#userpwds').focus();
+                    return false;
+                }
+            }
+
+            // 이름, 이메일, 생년월일 필수 입력란 체크
+            if (form.name.value.trim() === "") {
+                alert("이름을 입력하세요.");
+                form.name.focus();
+                return false;
+            }
+            if (form.emailprefix.value.trim() === "" || form.emaildomain.value.trim() === "") {
+                alert("이메일을 입력하세요.");
+                form.emailprefix.focus();
+                return false;
+            }
+            if (form.yy.value === "" || form.mm.value === "" || form.dd.value === "") {
+                alert("생년월일을 선택하세요.");
+                form.yy.focus();
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</th:block>
+</html>

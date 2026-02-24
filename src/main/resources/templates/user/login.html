@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainlayout}">
+
+<!-- content fragment 시작 -->
+<div layout:fragment="content">
+<style>
+    body {
+        /*bgimage.png 파일 경로: /image/bgimage.png */
+        background-image: url("/image/bgimage.jpg");
+        background-size: cover;          /* 화면을 꽉 채우도록 설정 */
+        background-position: center;     /* 이미지를 중앙에 배치 */
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+        margin: 0;
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+    <!-- CSS Link는 일반적으로 layout이나 Head에 위치하지만, fragment 내부에 둘 경우 이 위치를 유지합니다. -->
+    <link rel="stylesheet" th:href="@{/CSS/Style.css}">
+
+    <!-- ⭐⭐⭐ 폼과 로고를 감싸는 컨테이너 추가 (CSS에서 이 요소를 중앙에 배치합니다) ⭐⭐⭐ -->
+    <div class="login-page-container">
+
+        <!-- 1. 로고 영역 -->
+        <div class="logo-area">
+            <img th:src="@{/image/logo.png}" alt="Find Board Game Logo" class="login-logo-image">
+        </div>
+
+        <!-- 2. 로그인 박스 영역 -->
+        <div class="signup-box">
+
+            <!-- 에러 메시지 -->
+            <div th:if="${msg}" class="error-msg-box" >
+                <p th:text="${msg} ? ${msg} : '아이디 또는 비밀번호가 일치하지 않습니다.'"></p>
+            </div>
+
+            <form th:action="@{/user/login_proc}" method="post">
+
+                <div class="form-group">
+
+                    <input type="text" id="userid" name="userid" required autofocus placeholder="아이디를 입력하세요">
+                </div>
+
+                <div class="form-group">
+
+                    <input type="password" id="userpwd" name="userpwd" required placeholder="비밀번호를 입력하세요">
+                </div>
+
+                <div class="btn-group single-btn-group">
+                    <button type="submit" class="btn-submit">로그인</button>
+                </div>
+
+                <div class="btn-group bottom-btn-group">
+                    <a th:href="@{/user/join}">
+                        <button type="button" class="btn-back">회원가입</button>
+                    </a>
+                    <a th:href="@{/}">
+                        <button type="button" class="btn-back">홈으로</button>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    <!-- ⭐⭐⭐ login-page-container 끝 ⭐⭐⭐ -->
+</div>
+</html>

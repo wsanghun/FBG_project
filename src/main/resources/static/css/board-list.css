@@ -1,0 +1,217 @@
+/* 전체 래퍼 */
+.board-wrapper {
+    max-width: 100%;
+     margin: 0;
+     padding-top: 20px;
+}
+
+/* 헤더 */
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.board-header h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #FF7A00;
+}
+
+/* 글쓰기 버튼 (상단) */
+.write-btn {
+    background: #FF7A00;
+    padding: 10px 18px;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: .2s;
+}
+
+.write-btn:hover {
+    background: #ff8d26;
+    transform: translateY(-2px);
+}
+
+/* 리스트 영역 */
+.board-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* 카드형 게시글 */
+.board-item {
+    padding: 18px 22px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    transition: .2s;
+    cursor: pointer;
+}
+
+.board-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
+
+/* 제목 */
+.board-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+}
+
+.board-item:hover .board-title {
+    color: #FF7A00;
+}
+
+/* 메타 */
+.board-meta {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #666;
+}
+
+/* 페이지네이션 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 30px 0;
+}
+
+.pg-btn,
+.pg-num {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    text-decoration: none;
+    color: #555;
+    transition: .2s;
+}
+
+.pg-num.active {
+    background: #FF7A00;
+    color: white;
+    border-color: #FF7A00;
+}
+
+.pg-btn:hover,
+.pg-num:hover {
+    background: #ffe3c4;
+}
+
+/* 검색 */
+.board-search-box {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.board-search-select {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 90px;
+}
+
+.board-search-input {
+    width: 200px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.board-search-btn {
+    background: #FF7A00;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.board-search-btn:hover {
+    background: #ff8d1f;
+}
+
+/* 전체 3열 레이아웃 */
+.board-container {
+    display: grid;
+    grid-template-columns: 220px 1fr 220px;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 40px auto;
+    align-items: start;
+}
+
+/* ===== LEFT SIDEBAR ===== */
+
+.left-sidebar,
+.right-sidebar {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    height: fit-content;
+    margin-top: 80px;
+}
+
+.sidebar-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: #FF7A00;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 12px;
+}
+
+.sidebar-menu a {
+    text-decoration: none;
+    color: #444;
+    font-size: 15px;
+}
+
+.sidebar-menu a:hover {
+    color: #FF7A00;
+}
+
+/* ===== RIGHT SIDEBAR ===== */
+
+.popular-search-list {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.popular-search-list li {
+    font-size: 15px;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.popular-search-list li:hover {
+    color: #FF7A00;
+    cursor: pointer;
+}
+
+
+    .home-layout,
+    .main-content-wrapper {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+/* 중앙 게시판 그대로 유지 */
+

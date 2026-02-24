@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainlayout}">
+
+<th:block layout:fragment="content" th:with="pageType='home'">
+    <style>
+        body {
+            /*bgimage.png 파일 경로: /image/bgimage.png */
+            /*background-image: url("/image/bgimage.jpg");*/
+            background-size: cover;          /* 화면을 꽉 채우도록 설정 */
+            background-position: center;     /* 이미지를 중앙에 배치 */
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+        }
+    </style>
+
+    <div class="main-content-container">
+        <li class="diary-link">
+            <a href="https://www.notion.so/2a487806361780788fcaf3a1841b2675?v=2a48780636178030aed6000c47a46397"
+               target="_blank" rel="noopener noreferrer">일지 페이지로 이동</a>
+        </li>
+
+        <!-- 실시간 베스트 게임 영역 -->
+        <div class="hot-section">
+            <div class="section-header">
+                <h2>🔥 베스트 게임</h2>
+                <a href="/games" class="more-link">전체보기 ›</a>
+            </div>
+
+            <div class="hot-slider" id="hotSlider">
+
+                <a class="hot-card"
+                   th:each="game, iter : ${hotGames}"
+                   th:href="@{/games/{id}(id=${game.id})}">
+
+                    <!-- 순위 숫자 -->
+                    <span class="rank-number" th:text="${iter.index + 1}">1</span>
+
+                    <!-- 이미지 -->
+                    <img th:src="${game.thumbnail}"
+                         onerror="this.onerror=null; this.src='/image/noimage.png';"
+                         class="hot-img">
+
+                    <!-- 제목 (한국어 우선) -->
+                    <div class="game-title"
+                         th:text="${game.krName != null ? game.krName : game.name}">
+                        Game Name
+                    </div>
+
+                </a>
+
+            </div>
+        </div>
+
+
+        <div class="list-sections-container">
+
+            <!-- 왼쪽 -->
+            <div class="left-section">
+
+                <!-- 최신글 -->
+                <div class="main-list-section">
+                    <div class="section-header-line">
+                        <h3>최신 게시글</h3>
+                        <a href="/board/allboard?mode=latest" class="more-btn">더보기 ›</a>
+                    </div>
+
+                    <ul>
+                        <li th:each="board, stat : ${latestList}" th:if="${stat.index < 4}">
+                            <div class="latest-item-header">
+
+                                <a th:href="@{/board/boardview(idx=${board.idx})}"
+                                   th:text="${board.title}"></a>
+
+                                <!-- 🔥 글 타입 뱃지 추가! 클릭하면 해당 게시판 목록으로 이동 -->
+                                <a th:href="@{/board/boardlist(type=${board.type})}">
+                                    <span class="board-type-badge"
+                                          th:classappend="${board.type}">
+                                        <span th:text="${board.type.toUpperCase()}"></span>
+                                    </span>
+                                </a>
+
+                            </div>
+
+                            <div class="latest-meta">
+                                <span th:text="${board.userid}"></span>
+                                ·
+                                <span th:text="${board.views} + ' 조회'"></span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- 오른쪽 -->
+            <div class="right-section">
+
+                <div class="main-list-section">
+                    <div class="section-header-line">
+                        <h3>공지사항</h3>
+                        <a href="/board/boardlist?type=notice" class="more-btn">더보기 ›</a>
+                    </div>
+
+                    <ul>
+                        <li th:each="board, stat : ${noticeList}" th:if="${stat.index < 4}">
+                            <a th:href="@{/board/boardview(idx=${board.idx})}"
+                               th:text="${board.title}"></a>
+
+                            <div>
+                                <span th:text="${#dates.format(board.regdate, 'MM-dd')}"></span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="section-header">
+            <h2>인기 글</h2>
+            <a href="/board/allboard?mode=popular" class="more-link">전체보기 ›</a>
+        </div>
+
+        <div class="masonry-wrapper">
+            <div class="masonry-board">
+
+                <!-- 🔥 masonry-card가 여기서 반복되어야 한다 -->
+                <div th:each="board : ${popularList}">
+                    <div class="masonry-card">
+
+                        <a th:href="@{/board/boardview(idx=${board.idx})}"
+                           class="masonry-title"
+                           th:text="${board.title}"></a>
+
+                        <div class="masonry-meta">
+                            <span th:text="${board.userid}"></span>
+                            · 조회 <span th:text="${board.views}"></span>
+                            · 추천 <span th:text="${board.likeCount}"></span>
+                        </div>
+
+                        <div class="hidden-content" th:utext="${board.content}" style="display:none;"></div>
+
+                        <img class="masonry-img" style="display:block;" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+        // --- 기존 BEST1,2,3 업데이트 로직 ---
+        fetch("/boardgame/top")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("best1").innerText = data[0].name;
+                document.getElementById("best2").innerText = data[1].name;
+                document.getElementById("best3").innerText = data[2].name;
+            });
+
+        // --- HOT 슬라이더 자동 스크롤 ---
+    const slider = document.getElementById("hotSlider");
+    if (!slider) return;
+
+    // 🔥 무한 루프 만들기
+    const originalCards = [...slider.querySelectorAll(".hot-card")];
+    originalCards.forEach(card => slider.appendChild(card.cloneNode(true)));
+
+    // 설정값
+    let autoScrollSpeed = 0.5;
+    let isAutoScroll = true;
+    let dragStartX = 0;
+    let dragScrollLeft = 0;
+    let isDragging = false;
+    let restartTimer = null;
+
+    // 🔥 자동 슬라이드 재시작 타이머
+    const restartAutoScroll = () => {
+        clearTimeout(restartTimer);
+        restartTimer = setTimeout(() => {
+            isAutoScroll = true;
+        }, 1500);
+    };
+
+    // 드래그 시작
+    const startDrag = (e) => {
+        isAutoScroll = false;
+        isDragging = true;
+        slider.classList.add("dragging");
+
+        dragStartX = e.pageX || e.touches[0].pageX;
+        dragScrollLeft = slider.scrollLeft;
+
+        clearTimeout(restartTimer);
+    };
+
+    // 드래그 중
+    const duringDrag = (e) => {
+        if (!isDragging) return;
+
+        const x = e.pageX || e.touches[0].pageX;
+        slider.scrollLeft = dragScrollLeft - (x - dragStartX);
+    };
+
+    // 드래그 끝
+    const endDrag = () => {
+        isDragging = false;
+        slider.classList.remove("dragging");
+        restartAutoScroll();
+    };
+
+    // 🔥 휠로 좌우 이동
+    slider.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        isAutoScroll = false;
+
+        slider.scrollLeft += e.deltaY * 0.8;  // 자연스러운 휠 이동
+
+        restartAutoScroll(); // 1.5초 뒤 자동 슬라이드 재개
+    }, { passive: false });
+
+    // 마우스 올림 → 자동 멈춤
+    slider.addEventListener("mouseenter", () => {
+        isAutoScroll = false;
+    });
+
+    // 마우스 나감 → 1.5초 뒤 자동 재개
+    slider.addEventListener("mouseleave", () => {
+        restartAutoScroll();
+    });
+
+    // 드래그 이벤트
+    slider.addEventListener("mousedown", startDrag);
+    window.addEventListener("mousemove", duringDrag);
+    window.addEventListener("mouseup", endDrag);
+
+    slider.addEventListener("touchstart", startDrag);
+    window.addEventListener("touchmove", duringDrag);
+    window.addEventListener("touchend", endDrag);
+
+    // 🔥 자동 슬라이드 애니메이션
+    const animate = () => {
+        if (isAutoScroll && !isDragging) {
+            slider.scrollLeft += autoScrollSpeed;
+        }
+
+        // 무한 루프 처리
+        const maxScroll = slider.scrollWidth / 2;
+        if (slider.scrollLeft >= maxScroll) {
+            slider.scrollLeft = 0;
+        }
+
+        requestAnimationFrame(animate);
+    };
+
+    animate();
+
+      /* ==============================
+       ✅ 게시글 이미지 자동 추출 (Masonry 영역)
+    ============================== */
+    document.querySelectorAll(".masonry-card").forEach(card => {
+        const contentDiv = card.querySelector(".hidden-content");
+        const imgTag = card.querySelector(".masonry-img");
+
+        if (!contentDiv || !imgTag) return;
+
+        const temp = document.createElement("div");
+        temp.innerHTML = contentDiv.innerHTML;
+
+        const img = temp.querySelector("img");
+
+        if (img && img.src) {
+            imgTag.src = img.src;
+            imgTag.style.display = "block";
+        }
+    });
+
+    });
+    </script>
+</th:block>
+</html>

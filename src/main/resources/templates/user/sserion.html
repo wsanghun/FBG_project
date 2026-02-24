@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>세션 유지 확인</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .session-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); width: 100%; max-width: 400px; text-align: center; }
+        h2 { color: #333; margin-bottom: 25px; }
+        p { font-size: 1.1em; color: #555; margin-bottom: 10px; }
+        .info { font-weight: bold; color: #007bff; margin-left: 5px; }
+        .btn-group { margin-top: 30px; display: flex; justify-content: space-between; }
+        .btn-logout, .btn-home { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; transition: background-color 0.3s; width: 48%; }
+        .btn-logout { background-color: #dc3545; color: white; }
+        .btn-logout:hover { background-color: #c82333; }
+        .btn-home { background-color: #28a745; color: white; }
+        .btn-home:hover { background-color: #218838; }
+        a { text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="session-box">
+    <h2>로그인 세션 확인 완료</h2>
+
+    <!-- 세션에서 loginId와 loginName을 가져와 표시합니다. -->
+    <th:block th:if="${session.loginId}">
+        <p>환영합니다, 사용자 이름</span>님!</p>
+        <p>세션 ID: <span class="info" th:text="${session.loginId}">사용자 ID</span></p>
+        <p>이 페이지는 로그인 상태에서만 접근 가능합니다.</p>
+    </th:block>
+    <th:block th:unless="${session.loginId}">
+        <!-- 이 부분은 컨트롤러에서 걸러지므로 실제로는 거의 보이지 않습니다. -->
+        <p style="color: red;">세션 정보가 없습니다. 다시 로그인 해주세요.</p>
+    </th:block>
+
+    <div class="btn-group">
+        <a th:href="@{/user/login}">
+            <button class="btn-logout">로그인</button>
+        </a>
+
+        </a>
+        <a th:href="@{/main/mainpage}">
+            <button class="btn-home">게시판으로</button>
+        </a>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,673 @@
+/* ===========================================
+   GLOBAL LAYOUT 기본 설정
+=========================================== */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+/* body를 세로 Flex 컨테이너로 구성하여
+   메인 콘텐츠가 공간을 차지하고
+   푸터는 아래에 고정되도록 함 */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #ffffff;
+}
+
+/* ===========================================
+   MAIN CONTENT WRAPPER — 본문 영역
+=========================================== */
+
+.main-content-wrapper {
+    flex: 1; /* ⭐️ 페이지 본문이 남은 공간을 채움 → 푸터 아래 고정 */
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* .main-content는 flex 제거 → 레이아웃 오류 해결 */
+.main-content {
+    width: 100%;
+    max-width: 1400px;
+    box-sizing: border-box;
+    padding: 40px 20px;
+    display: block; /* ⭐️ flex 제거가 핵심 */
+}
+
+/* ===========================================
+   FORM 레이아웃
+=========================================== */
+
+.form-layout {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+.form-buttons {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.form-buttons button {
+    min-width: 120px;
+    padding: 10px 20px;
+    border-radius: 6px;
+}
+
+/* 성별 라디오 버튼 */
+.gender-options {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.gender-options label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    font-weight: 400;
+}
+
+.gender-options input[type="radio"] {
+    margin-right: 5px;
+    width: auto;
+}
+
+/* 생년월일 선택 */
+.input-group > div {
+    width: 100%;
+}
+
+.birth-selects {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+}
+
+.birth-selects select {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+/* ===========================================
+   HEADER (네가 기존 만든 헤더 스타일 유지)
+=========================================== */
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.main-header {
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0; /* 헤더 크기 고정 */
+}
+
+/* 상단(로고 + 검색창 + 버튼) */
+.header-main-top-bar {
+    background: linear-gradient(to right, #ffc000, #ff6600);
+    padding: 15px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.top-bar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 15px;
+}
+
+.logo-area {
+    flex-shrink: 0;
+}
+
+.logo-img {
+    width: 100px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.search-and-advanced {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+    max-width: 500px;
+}
+
+.search-box-wrap {
+    flex-grow: 1;
+    max-width: 600px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 5px;
+    padding: 8px 15px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    padding: 0 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+.search-icon {
+    color: #999;
+    font-size: 18px;
+}
+
+/* 하단 메뉴 */
+.header-menu-bottom-bar {
+    background-color: #fff;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.bottom-menu-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+.header-menu-bottom {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+}
+
+.notification-dropdown {
+    display: none;
+    position: absolute;
+    top: 35px;
+    right: 0;
+    width: 260px;
+    padding: 10px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+    z-index: 999;
+}
+
+.notification-dropdown.open {
+    display: block;
+}
+
+/* 비어 있을 때 */
+.notice-empty {
+    padding: 20px;
+    text-align: center;
+    color: #777;
+    font-size: 14px;
+}
+
+/* 알림 항목 */
+.notice-item a {
+    display: block;
+    padding: 12px 16px;
+    color: #333;
+    text-decoration: none;
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
+}
+
+.notice-item a:hover {
+    background: #f8f8f8;
+}
+
+.notice-text {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.notice-date {
+    font-size: 12px;
+    color: #999;
+}
+
+.notification-btn {
+    cursor: pointer;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px; /* 알림 아이콘 크기 */
+    color: #222;
+    margin-right: 12px;
+}
+
+.notification-btn i {
+    cursor: pointer; /* 아이콘에도 적용 */
+}
+
+/* ===========================================
+   🎨 BUTTON SYSTEM — 보드게임 스타일 버튼
+   (기존 btn / btn-blue-light / btn-blue-dark / btn-red / btn-option → 대체)
+=========================================== */
+
+/* 기본 버튼 구조 */
+.btn {
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: .15s ease;
+    border: none;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.12);
+    font-size: 15px;
+}
+
+
+/* ===========================================
+   🟠 1) 메인 기능 버튼 — 검색 / 글쓰기 / 주요 기능
+   (토큰·칩 느낌)
+=========================================== */
+.btn-orange {
+    background: linear-gradient(180deg, #ffb74a, #ff9800);
+    color: #4a2400;
+    box-shadow: 0 4px 0 #c47700;
+}
+
+.btn-orange:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #b96800;
+}
+
+.btn-orange:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #b96800;
+}
+
+
+/* ===========================================
+   🔵 2) 강조 버튼 — 회원가입 / 로그인
+   (카드 토큰 느낌)
+=========================================== */
+.btn-blue {
+    background: linear-gradient(180deg, #6ac8ff, #3084ff);
+    color: white;
+    box-shadow: 0 3px 0 #1f5bb5;
+}
+
+.btn-blue:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 #1c4f9f;
+}
+
+.btn-blue:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #1c4f9f;
+}
+
+
+/* ===========================================
+   ⚪ 3) 화이트 옵션 버튼 — 상세옵션, 설정, 필터 등
+   (심플 카드 버튼)
+=========================================== */
+.btn-option {
+    background: white;
+    border: 2px solid #ddd;
+    color: #333;
+    padding: 9px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.btn-option:hover {
+    border-color: #ff9800;
+    color: #ff9800;
+}
+
+
+/* ===========================================
+   🔥 반응형 일관성 보장
+=========================================== */
+@media (max-width: 768px) {
+    .btn {
+        padding: 8px 14px;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+}
+
+/* ===========================================
+   로그인 후 유저 액션 영역
+=========================================== */
+
+.user-buttons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-menu-item {
+    display: flex;
+    align-items: center;
+    color: #1a1a1a;
+    font-weight: 500;
+    transition: opacity 0.2s;
+    position: relative;
+}
+
+.user-menu-item:hover {
+    opacity: 0.8;
+}
+
+.write-post-btn {
+    color: #1a1a1a;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.notification-btn {
+    color: #1a1a1a;
+    font-size: 1.3rem;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: #ff0000;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    border: 1px solid white;
+    min-width: 15px;
+    text-align: center;
+    z-index: 5;
+}
+
+/* 드롭다운 */
+.user-profile-menu-container {
+    position: relative;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* ================================
+   🔥 드롭다운 메뉴 강제 복구 스타일
+================================ */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    min-width: 170px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    padding: 10px 0;
+    margin-top: 10px;
+    z-index: 20;
+}
+
+.dropdown-content a {
+    display: block !important;
+    padding: 12px 16px !important;
+    color: #333 !important;
+    font-size: 0.95rem;
+    white-space: nowrap !important;
+}
+
+.dropdown-content a:hover {
+    background-color: #f8f8f8 !important;
+}
+
+/* 로그아웃 버튼 */
+.dropdown-logout-btn {
+    display: block !important;
+    width: 100% !important;
+    padding: 12px 16px !important;
+    border: none !important;
+    background: none !important;
+    text-align: left !important;
+    cursor: pointer;
+    border-top: 1px solid #eee;
+    color: #e53935 !important;
+}
+
+.profile-img {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 8px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* 프로필 아이콘(첫 글자) — 이미지 없을 때 */
+.profile-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff8a00, #ff5500);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 16px;
+    margin-right: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* 프로필 클릭 영역 */
+.profile-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+/* 유저 아이디 텍스트 */
+.user-id {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #222;
+}
+
+/* 드롭다운 화살표 */
+.dropdown-arrow {
+    margin-left: 4px;
+    color: #555;
+}
+
+.notification-wrapper {
+    position: relative;
+}
+
+.notification-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 35px;
+    width: 260px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    padding: 10px 0;
+}
+
+.notification-item a {
+    display: block;
+    padding: 10px 15px;
+}
+
+.notification-item a:hover {
+    background: #f7f7f7;
+}
+
+.msg {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.date {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+}
+
+.no-notification {
+    padding: 15px;
+    text-align: center;
+    color: #777;
+}
+
+/* 상세옵션 버튼 */
+.btn-option {
+    background: white;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 8px 14px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background .2s;
+}
+.btn-option:hover {
+    background: #f1f1f1;
+}
+
+/* 🔥 모바일 햄버거 아이콘: 기본 숨김 */
+.menu-icon {
+    font-size: 22px;
+    display: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+/* 모바일 드롭다운 메뉴 */
+.mobile-nav-dropdown {
+    display: none;
+    flex-direction: column;
+    background: white;
+    width: 100%;
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+}
+.mobile-nav-dropdown a {
+    padding: 12px 20px;
+    display: block;
+}
+.mobile-nav-dropdown.open {
+    display: flex;
+}
+
+/* 🔥 데스크톱 메뉴 */
+.desktop-menu {
+    display: flex;
+    gap: 20px;
+}
+
+/* 📱 모바일 대응 */
+@media (max-width: 768px) {
+
+    /* 데스크톱 네비 숨김 */
+    .desktop-menu {
+        display: none;
+    }
+
+    /* 햄버거 버튼 표시 */
+    .menu-icon {
+        display: block;
+    }
+
+    /* 검색 영역 줄이기 */
+    .search-and-advanced {
+        max-width: 300px;
+        gap: 6px;
+    }
+
+    .btn-option {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+}
+
+/* ===========================================
+   FOOTER
+=========================================== */
+
+.main-footer {
+    background: linear-gradient(to right, #ffc000, #ff6600);
+    padding: 20px 0;
+    text-align: center;
+    color: white;
+    font-size: 0.9rem;
+    width: 100%;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+}

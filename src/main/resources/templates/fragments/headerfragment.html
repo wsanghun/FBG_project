@@ -1,0 +1,198 @@
+<header class="main-header" th:fragment="header"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+          crossorigin="anonymous"/>
+
+    <div class="header-main-top-bar">
+        <div class="top-bar-container">
+
+            <!-- 로고 -->
+            <a th:href="@{/}" class="logo-area-link">
+                <div class="logo-area">
+                    <img th:src="@{/image/logo.png}" alt="Find Board Game Logo" class="logo-img">
+                </div>
+            </a>
+
+            <!-- 검색 영역 -->
+            <div class="search-and-advanced">
+
+                <div class="search-box-wrap">
+                    <div class="search-box">
+                        <form id="headerSearchForm" th:action="@{/search}" method="get" class="search-form">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" name="keyword" id="headerKeyword" placeholder="통합검색">
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 🔥 검색 버튼 (고급검색 → 검색 버튼으로 변경) -->
+                <button class="btn btn-orange" id="searchSubmitBtn">검색</button>
+            </div>
+
+            <!-- 유저 메뉴 -->
+            <div class="user-actions">
+
+                <!-- 로그인 전 -->
+                <th:block sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/user/join}" class="btn btn-blue">회원가입</a>
+                    <a th:href="@{/login}" class="btn btn-blue">로그인</a>
+                </th:block>
+
+                <!-- 로그인 후 -->
+                <th:block sec:authorize="isAuthenticated()">
+                    <a th:href="@{/board/write}" class="btn btn-orange">글쓰기</a>
+
+                    <!-- 🔔 알림 -->
+                    <div class="notification-wrapper">
+
+                        <!-- 알림 버튼 -->
+                        <a id="notificationBtn" class="user-menu-item notification-btn">
+                            <i class="far fa-bell"></i>
+
+                            <!-- 읽지 않은 알림이 있을 때만 숫자 표시 -->
+                            <span class="notification-badge"
+                                  th:if="${notificationCount > 0}"
+                                  th:text="${notificationCount}"></span>
+                        </a>
+
+                        <!-- 드롭다운 -->
+                        <div class="notification-dropdown" id="notificationDropdown">
+
+                            <!-- 알림 없음 -->
+                            <div class="notice-empty"
+                                 th:if="${notificationList == null or #lists.isEmpty(notificationList)}">
+                                📭 알림이 없습니다.
+                            </div>
+
+                            <!-- 알림 목록 -->
+                            <div class="notice-item"
+                                 th:each="n : ${notificationList}">
+                                <a th:href="@{/notifications/read(id=${n.id})}">
+                                    <div class="notice-text" th:text="${n.message}"></div>
+                                    <div class="notice-date"
+                                         th:text="${#dates.format(n.createdAt, 'yyyy-MM-dd HH:mm')}"></div>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <!-- 프로필 -->
+                    <div class="user-profile-menu-container">
+                        <a id="profile-dropdown-btn" class="user-menu-item profile-link">
+
+                            <img class="profile-img"
+                                 th:if="${#authentication.principal.profileImage != null}"
+                                 th:src="${#authentication.principal.profileImage}"/>
+
+                            <span th:if="${#authentication.principal.profileImage == null}"
+                                  class="profile-icon"
+                                  th:text="${#strings.substring(#authentication.name, 0, 1)}"></span>
+
+                            <span class="user-id" th:text="${#authentication.name}"></span>
+                            <i class="fas fa-caret-down dropdown-arrow"></i>
+                        </a>
+
+                        <div id="profile-dropdown-content" class="dropdown-content">
+                            <a th:href="@{/user/view(idx=${#authentication.principal.memberEntity.idx})}">
+                                내 정보
+                            </a>
+                            <a th:href="@{/mypage/articles}">내 글</a>
+                            <a th:href="@{/settings}">설정</a>
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit" class="dropdown-logout-btn">로그아웃</button>
+                            </form>
+                        </div>
+                    </div>
+                </th:block>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ▼ 하단 네비 -->
+    <div class="header-menu-bottom-bar">
+        <div class="bottom-menu-container">
+
+            <!-- 모바일 햄버거 -->
+            <i class="fas fa-bars menu-icon" id="mobileMenuBtn"></i>
+
+            <!-- 데스크톱 메뉴 -->
+            <nav class="header-menu-bottom desktop-menu">
+                <a th:href="@{/board/boardlist(type='free')}">자유게시판</a>
+                <a th:href="@{/board/boardlist(type='notice')}">공지사항</a>
+                <a th:href="@{/board/boardlist(type='review')}">후기</a>
+                <a th:href="@{/board/boardlist(type='qna')}">질문게시판</a>
+            </nav>
+
+            <!-- 모바일 네비 -->
+            <div id="mobileNavDropdown" class="mobile-nav-dropdown">
+                <a th:href="@{/board/boardlist(type='free')}">자유게시판</a>
+                <a th:href="@{/board/boardlist(type='notice')}">공지사항</a>
+                <a th:href="@{/board/boardlist(type='review')}">후기</a>
+                <a th:href="@{/board/boardlist(type='qna')}">질문게시판</a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script>
+        const mobileBtn = document.getElementById("mobileMenuBtn");
+        const mobileNav = document.getElementById("mobileNavDropdown");
+
+        document.getElementById("searchSubmitBtn").addEventListener("click", () => {
+            document.getElementById("headerSearchForm").submit();
+        });
+
+        mobileBtn.addEventListener("click", () => {
+            mobileNav.classList.toggle("open");
+        });
+
+        /* 🔥 DOM 로딩 후 실행 (딱 1번만!) */
+        document.addEventListener('DOMContentLoaded', function() {
+
+            /* ===================== 프로필 드롭다운 ===================== */
+            const btn = document.getElementById('profile-dropdown-btn');
+            const content = document.getElementById('profile-dropdown-content');
+
+            if (btn && content) {
+                btn.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    content.style.display = content.style.display === 'block' ? 'none' : 'block';
+                });
+
+                window.addEventListener('click', function(event) {
+                    if (!btn.contains(event.target) && !content.contains(event.target)) {
+                        content.style.display = 'none';
+                    }
+                });
+            }
+
+            /* ===================== 🔔 알림 드롭다운 ===================== */
+            const notificationBtn = document.getElementById("notificationBtn");
+            const notificationDropdown = document.getElementById("notificationDropdown");
+
+            if (notificationBtn && notificationDropdown) {
+
+                notificationBtn.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    notificationDropdown.classList.toggle("open");
+                });
+
+                document.addEventListener("click", () => {
+                    notificationDropdown.classList.remove("open");
+                });
+            }
+
+        });
+    </script>
+
+</header>

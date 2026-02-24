@@ -1,0 +1,43 @@
+.my-article-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 40px auto;
+}
+
+.title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.article-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.article-item {
+    padding: 18px 22px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.article-item:hover {
+    transform: translateY(-3px);
+}
+
+.article-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.article-meta {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #888;
+    display: flex;
+    gap: 15px;
+}

@@ -1,0 +1,206 @@
+/* 전체 레이아웃 */
+.game-detail-container {
+  max-width: 1100px;
+  margin: 50px auto;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 60px;
+}
+
+.game-detail-container2 {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 60px;
+}
+
+/* 왼쪽 패널 */
+.left-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 오른쪽 패널 */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 이미지 */
+.detail-image img {
+  width: 420px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* 제목 영역 */
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.game-title2 {
+  margin-top: 12px;
+  font-size: 36px;
+  margin-bottom:0;
+  text-align: center;
+      font-weight: 700;
+}
+
+.back-btn-inline {
+  background:#0d47a1;
+  color:white;
+  padding:10px 20px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:700;
+}
+
+/* 영어 제목 */
+.origin-name {
+  margin:8px 0;
+  font-size:18px;
+  color:#666;
+}
+
+/* 버튼 */
+.action-button {
+  display:flex;
+  gap:10px;
+  margin:10px 0 20px;
+}
+
+.action-button button {
+  padding:10px 18px;
+  border:none;
+  border-radius:12px;
+  background:#f3f4f6;
+  cursor:pointer;
+}
+
+.action-button button:hover {
+  background:#0d47a1;
+  color:white;
+}
+
+/* 영문 이름 바로 아래 버튼 전용 */
+.action-button.under-origin {
+    margin-top: 6px;
+    margin-bottom: 20px;
+}
+
+/* 설명 */
+.detail-desc {
+  margin-top:20px;
+  font-size:16px;
+  line-height:1.7;
+}
+
+/* 그래프 */
+.usergraph{
+    margin: 0;
+}
+
+.rating-graph-box {
+
+  background:#f8f9fb;
+  padding:20px;
+  border-radius:20px;
+}
+
+.rating-bar {
+  display:grid;
+  grid-template-columns:50px 1fr 50px;
+  gap:10px;
+  align-items:center;
+  margin:12px 0;
+}
+
+.bar {
+  background:#e5e7eb;
+  height:12px;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.fill {
+  height:100%;
+  background:linear-gradient(to right,#4facfe,#00f2fe);
+  width:0%;
+}
+
+.count {
+  font-size:13px;
+  color:#555;
+}
+
+/* 정보 카드 */
+.extra-info-box {
+
+  background:#f8f9fb;
+  padding:20px;
+  border-radius:20px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px 25px;
+}
+
+.info-item {
+  display:flex;
+  justify-content:space-between;
+}
+
+.info-item.full {
+  grid-column:span 2;
+}
+
+/* 설명서 */
+.manual-section {
+  margin-top:40px;
+}
+
+.manual-images {
+  display:flex;
+  gap:10px;
+}
+
+.manual-images img {
+  width:140px;
+  height:180px;
+  border-radius:10px;
+}
+
+/* 비슷한 게임 */
+.similar-section {
+    margin-top: 40px;
+}
+
+.similar-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.similar-list {
+    display: flex;
+    gap: 20px;
+}
+
+.similar-card {
+    width: 140px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.similar-card img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.similar-card p {
+    margin-top: 6px;
+    font-size: 14px;
+}

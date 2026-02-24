@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainlayout}">
+
+<th:block layout:fragment="content">
+
+    <link rel="stylesheet" th:href="@{/css/Style.css}">
+    <link rel="stylesheet" th:href="@{/css/allboard.css}">
+
+    <div class="allboard-container">
+
+        <div class="allboard-title" th:text="${mode == 'popular'} ? '인기 게시글' : '최신 게시글'">
+            최신 게시글
+        </div>
+
+        <!-- 🔍 검색 -->
+        <form class="search-wrapper" method="get"
+              th:action="@{/board/allboard(mode=${mode})}">
+            <select class="search-select" name="key">
+                <option value="title"   th:selected="${key == 'title'}">제목</option>
+                <option value="content" th:selected="${key == 'content'}">내용</option>
+                <option value="id"      th:selected="${key == 'id'}">아이디</option>
+            </select>
+
+            <input class="search-input" type="text" name="word" th:value="${word}">
+            <button class="search-btn" type="submit">검색</button>
+        </form>
+
+        <!-- 🔎 검색 결과 없음 -->
+        <div class="no-result" th:if="${allBoards.content.size() == 0}">
+            검색 결과가 없습니다.
+        </div>
+
+        <!-- 🔥 전체 리스트 -->
+        <div class="allboard-list">
+
+            <div class="allboard-item"
+                 th:each="board : ${allBoards.content}"
+                 th:onclick="'location.href=\'/board/boardview?idx=' + ${board.idx} + '\';'">
+
+                <div class="item-left">
+
+                    <a class="item-title"
+                       th:href="@{/board/boardview(idx=${board.idx})}"
+                       th:text="${board.title}">
+                    </a>
+
+                    <a th:href="@{/board/boardlist(type=${board.type})}">
+                        <span class="board-type-badge"
+                              th:classappend="${board.type}"
+                              th:text="${board.type.toUpperCase()}"></span>
+                    </a>
+
+                    <div class="item-meta">
+                        <span th:text="${board.userid}"></span>
+                        ·
+                        <span th:text="${#dates.format(board.regdate, 'yyyy-MM-dd')}"></span>
+                        · 추천 <span th:text="${board.likeCount}"></span>
+                        · 비추천 <span th:text="${board.dislikeCount}"></span>
+                    </div>
+                </div>
+
+                <div class="item-right">
+                    <span th:text="${board.views} + ' 조회'"></span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- 📌 페이징 -->
+        <div class="board-pagination"
+             th:with="
+         currentPage=${allBoards.number + 1},
+         totalPages=${allBoards.totalPages},
+         pageGroupSize=5,
+         startPage=${(currentPage - 1) / pageGroupSize * pageGroupSize + 1},
+         endPage=${totalPages > 0 ? ((startPage + pageGroupSize - 1 < totalPages)
+         ? startPage + pageGroupSize - 1 : totalPages) : 1}
+     ">
+
+            <!-- 이전 -->
+            <a class="page-link-custom page-disabled" th:if="${allBoards.first}">이전</a>
+
+            <a class="page-link-custom"
+               th:if="${!allBoards.first}"
+               th:href="@{/board/allboard(page=${allBoards.number}, key=${key}, word=${word}, mode=${mode})}">
+                이전
+            </a>
+
+            <!-- 숫자 -->
+            <a class="page-link-custom"
+               th:each="num : ${#numbers.sequence(startPage, endPage)}"
+               th:classappend="${num == currentPage ? 'page-active' : ''}"
+               th:href="@{/board/allboard(page=${num}, key=${key}, word=${word}, mode=${mode})}"
+               th:text="${num}">
+            </a>
+
+            <!-- 다음 -->
+            <a class="page-link-custom page-disabled" th:if="${allBoards.last}">다음</a>
+
+            <a class="page-link-custom"
+               th:if="${!allBoards.last}"
+               th:href="@{/board/allboard(page=${allBoards.number + 5}, key=${key}, word=${word}, mode=${mode})}">
+                다음
+            </a>
+
+        </div>
+
+    </div>
+
+</th:block>
+</html>

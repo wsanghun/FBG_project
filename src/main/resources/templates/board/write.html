@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainlayout}">
+
+<div layout:fragment="content">
+    <style>
+        body {
+            background-image: url("/image/bgimage.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+            display: block !important;
+        }
+
+    </style>
+
+    <div class="page-container">
+        <!-- ========== 좌측: 글쓰기 영역 ========== -->
+        <div class="writing-area">
+
+            <div class="writing-header">
+                <h2>게시글 등록</h2>
+
+                <!--<div class="status-indicators">
+                    <span class="status-item">소재</span>
+                    <span class="status-item">작성중 0</span>
+                </div>-->
+            </div>
+
+            <!-- 게시판 선택 -->
+            <div class="board-select mt-3">
+                <label for="type">게시판 선택</label>
+                <select name="type" id="type" class="form-select">
+                    <option value="free"   th:selected="${type == 'free'}">자유게시판</option>
+                    <option value="notice" th:selected="${type == 'notice'}">공지사항</option>
+                    <option value="review" th:selected="${type == 'review'}">후기</option>
+                    <option value="qna"    th:selected="${type == 'qna'}">질문게시판</option>
+                </select>
+            </div>
+
+            <!-- 안내 메시지 -->
+            <div class="warning-message">
+                [안내] 외부 링크 및 복사 콘텐츠 등록에 대한 협조 요청
+            </div>
+
+            <!-- 글쓰기 폼 -->
+            <form action="/board_proc" method="post" enctype="multipart/form-data">
+
+                <!-- ⭐ 현재 보고 있던 게시판(type) 유지 -->
+                <input type="hidden" name="type" th:value="${type}">
+
+                <!-- 제목 -->
+                <input type="text" id="title" name="title"
+                       class="title-input" placeholder="제목" required />
+
+                <!-- CKEditor -->
+                <textarea id="content" name="content"></textarea>
+
+                <!-- 첨부 파일 -->
+                <div class="file-attachments mt-4">
+                    <h4>첨부 파일</h4>
+                    <input type="file" name="upfile" class="form-control">
+                </div>
+
+                <!-- 버튼 -->
+                <div class="action-buttons mt-4">
+                    <button type="button" class="btn-secondary-custom">저장</button>
+                    <button type="submit" class="btn-primary-custom">등록</button>
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- ========== 우측: 안내 사이드바 ========== -->
+        <div class="guide-sidebar">
+            <h3>커뮤니티 규칙 준수</h3>
+            <ul>
+                <li>게시글은 예의범절을 지켜주세요.</li>
+                <li>작성자는 글에 대한 불이익을 받아요.</li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- CKEditor 스크립트 -->
+<th:block layout:fragment="script">
+
+    <!-- ✔ CDN CKEditor 5 Classic + Font + Color + Base64 Upload -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.4.0/classic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.4.0/classic/translations/ko.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ckeditor/ckeditor5-upload@35.4.0/build/base64uploadadapter.js"></script>
+
+    <script>
+        ClassicEditor.create(document.querySelector('#content'), {
+
+            language: "ko",
+
+            ckfinder: {
+                uploadUrl: "/upload/image"
+            },
+
+            htmlSupport: {
+                allow: [
+                    {
+                        name: /.*/,
+                        attributes: true,
+                        classes: true,
+                        styles: true
+                    }
+                ]
+            },
+
+            toolbar: {
+                items: [
+                    'undo', 'redo',
+                    '|', 'heading',
+                    '|', 'bold', 'italic', 'underline', 'strikethrough',
+                    '|', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor',
+                    '|', 'alignment',
+                    '|', 'bulletedList', 'numberedList', 'blockQuote',
+                    '|', 'link', 'imageUpload', 'insertTable'
+
+                ]
+            },
+
+            image: {
+                toolbar: [
+                    'imageTextAlternative',
+                    'toggleImageCaption',
+                    'imageStyle:inline',
+                    'imageStyle:block',
+                    'imageStyle:side',
+                    'resizeImage'
+                ],
+
+            styles: [
+                'inline',
+                'block',
+                'side'
+            ],
+
+            resizeOptions: [
+                {
+                    name: 'resizeImage:original',
+                    label: '100%',
+                    value: null
+                },
+                {
+                    name: 'resizeImage:50',
+                    label: '50%',
+                    value: '50'
+                },
+                {
+                    name: 'resizeImage:75',
+                    label: '75%',
+                    value: '75'
+                }
+            ]
+           }
+
+        }).then(editor => {
+
+            // ⭐ 외부 URL 이미지를 업로드하도록 커스터마이즈
+            editor.plugins.get( "ClipboardPipeline" ).on( "inputTransformation", async (evt, data) => {
+
+                const fetchFileFromUrl = async (url) => {
+                    const response = await fetch(url);
+                    const blob = await response.blob();
+
+                    const fileExt = blob.type.split("/")[1];
+                    return new File([blob], "web_image." + fileExt, { type: blob.type });
+                };
+
+                const content = data.content;
+
+                for (const node of content.getChildren()) {
+                    if (node.is("element", "img")) {
+
+                        const src = node.getAttribute("src");
+
+                        // 외부 URL이면 → Blob 변환 후 → 서버 업로드
+                        if (src.startsWith("http")) {
+
+                            const file = await fetchFileFromUrl(src);
+
+                            const fileRepository = editor.plugins.get('FileRepository');
+                            const uploadAdapter = fileRepository.createUploadAdapter(file);
+
+                            const uploadResult = await uploadAdapter.upload();
+
+                            // ⭐ 업로드한 서버 주소로 src 변경
+                            node.setAttribute("src", uploadResult.default);
+                        }
+                    }
+                }
+            });
+
+        }).catch(error => {
+            console.error("CKEditor 에러:", error);
+        });
+    </script>
+
+</th:block>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainlayout}">
+
+<div layout:fragment="content">
+
+    <link rel="stylesheet" th:href="@{/css/game-detail.css}">
+
+    <div class="game-detail-container">
+
+        <!-- ================= 왼쪽 영역 ================= -->
+        <div class="left-panel">
+            <div class="detail-image">
+                <img th:src="${game.thumbnail}" onerror="this.src='/image/noimage.png'"/>
+            </div>
+
+        </div>
+        <!-- ================= 오른쪽 영역 ================= -->
+        <div class="right-panel">
+
+            <!-- 제목 + 목록 버튼 -->
+            <div class="title-row">
+                <h1 class="game-title2" th:text="${game.krName}"></h1>
+                <a href="/games" class="back-btn-inline">← 목록으로</a>
+            </div>
+
+            <p class="origin-name" th:text="${game.name}"></p>
+
+
+            <!-- 좋아요 / 즐겨찾기 -->
+            <div class="action-button">
+                <button id="likeBtn">🤍 좋아요</button>
+                <button id="favoriteBtn">⭐ 즐겨찾기</button>
+            </div>
+
+            <!-- 기본 정보 -->
+            <div class="info-row">
+                <span>출시년도</span><strong th:text="${game.year}"></strong>
+            </div>
+            <div class="info-row">
+                <span>랭킹</span><strong th:text="${game.rank}"></strong>
+            </div>
+
+            <!-- 설명 -->
+            <div class="detail-desc">
+                <h3>게임 설명</h3>
+                <p th:text="${game.description}"></p>
+            </div>
+        </div>
+    </div>
+    <div class="game-detail-container2">
+
+        <!-- ================= 왼쪽 영역 ================= -->
+        <div class="left-panel">
+            <!-- 그래프 -->
+            <div class="rating-graph-box">
+                <h3 class="usergraph">유저 평점 분포</h3>
+
+                <div class="rating-bar">
+                    <span>10점</span>
+                    <div class="bar"><div class="fill fill-10"></div></div>
+                    <span class="count" id="rate10"></span>
+                </div>
+
+                <div class="rating-bar">
+                    <span>9점</span>
+                    <div class="bar"><div class="fill fill-9"></div></div>
+                    <span class="count" id="rate9"></span>
+                </div>
+
+                <div class="rating-bar">
+                    <span>8점</span>
+                    <div class="bar"><div class="fill fill-8"></div></div>
+                    <span class="count" id="rate8"></span>
+                </div>
+            </div>
+
+            <!-- 설명서 -->
+            <div class="manual-section">
+                <h3>게임 설명서</h3>
+
+                <div class="manual-images">
+                    <img src="/image/noimage.png">
+                    <img src="/image/noimage.png">
+                    <img src="/image/noimage.png">
+                </div>
+
+                <a href="/files/brass_rulebook.pdf" class="manual-download">
+                    📥 설명서 PDF 다운로드
+                </a>
+            </div>
+        </div>
+
+
+        <!-- ================= 오른쪽 영역 ================= -->
+        <div class="right-panel">
+            <!-- ✅ 그래프 오른쪽 카드 -->
+            <div class="extra-info-box">
+                <div class="info-item">
+                    <span>⭐ 평점</span>
+                    <strong th:text="${extra.rating}"></strong>
+                </div>
+
+                <div class="info-item">
+                    <span>🎲 난이도</span>
+                    <strong th:text="${extra.weight}"></strong>
+                </div>
+
+                <div class="info-item">
+                    <span>👥 인원</span>
+                    <strong th:text="${extra.minPlayers + '~' + extra.maxPlayers}"></strong>
+                </div>
+
+                <div class="info-item">
+                    <span>⏱ 플레이 시간</span>
+                    <strong th:text="${extra.playingTime + '분'}"></strong>
+                </div>
+
+                <div class="info-item full">
+                    <span>🎨 디자이너</span>
+                    <strong th:text="${extra.designers}"></strong>
+                </div>
+
+                <div class="info-item full">
+                    <span>🏢 퍼블리셔</span>
+                    <strong th:text="${extra.publishers}"></strong>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <!-- ✅ 비슷한 게임 (이미지 시작 라인 기준) -->
+        <div class="similar-section" th:if="${similarGames.size() > 0}">
+            <h3 class="similar-title">비슷한 게임</h3>
+
+            <div class="similar-list">
+                <div class="similar-card"
+                     th:each="g : ${similarGames}"
+                     th:onclick="|location.href='@{/games/{id}(id=${g.id})}'|">
+                    <img th:src="${g.thumbnail}">
+                    <p th:text="${g.krName != null ? g.krName : g.name}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+      const gameId = "[[${game.id}]]";
+
+      // ================= 좋아요 =================
+      const likeBtn = document.getElementById("likeBtn");
+
+      let likes = JSON.parse(localStorage.getItem("likes") || "[]");
+
+      if (likes.includes(gameId)) {
+          likeBtn.innerText = "❤️ 좋아요됨";
+      }
+
+      likeBtn.addEventListener("click", () => {
+          if (likes.includes(gameId)) {
+              likes = likes.filter(id => id !== gameId);
+              likeBtn.innerText = "🤍 좋아요";
+          } else {
+              likes.push(gameId);
+              likeBtn.innerText = "❤️ 좋아요됨";
+          }
+          localStorage.setItem("likes", JSON.stringify(likes));
+      });
+
+      // ================= 즐겨찾기 =================
+      const favBtn = document.getElementById("favoriteBtn");
+
+      let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+      if (favorites.includes(gameId)) {
+          favBtn.innerText = "✅ 즐겨찾기됨";
+      }
+
+      favBtn.addEventListener("click", () => {
+          if (favorites.includes(gameId)) {
+              favorites = favorites.filter(id => id !== gameId);
+              favBtn.innerText = "⭐ 즐겨찾기";
+          } else {
+              favorites.push(gameId);
+              favBtn.innerText = "✅ 즐겨찾기됨";
+          }
+          localStorage.setItem("favorites", JSON.stringify(favorites));
+      });
+
+      // ================= 그래프 =================
+      function randomPercent() {
+          return Math.floor(Math.random() * 100);
+      }
+
+      const r10 = randomPercent();
+      const r9 = randomPercent();
+      const r8 = randomPercent();
+
+      document.querySelector(".fill-10").style.width = r10 + "%";
+      document.querySelector(".fill-9").style.width = r9 + "%";
+      document.querySelector(".fill-8").style.width = r8 + "%";
+
+      document.getElementById("rate10").innerText = r10 + "%";
+      document.getElementById("rate9").innerText = r9 + "%";
+      document.getElementById("rate8").innerText = r8 + "%";
+
+  });
+    </script>
+</div>
+</html>

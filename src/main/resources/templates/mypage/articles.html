@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainlayout}">
+
+<div layout:fragment="content">
+
+    <link rel="stylesheet" th:href="@{/css/mypage.css}">
+    <link rel="stylesheet" th:href="@{/css/board-list.css}">
+
+    <!-- 전체 레이아웃 통일 -->
+    <div class="board-container">
+
+        <!-- ▒▒ 좌측 사이드바 ▒▒ -->
+        <aside class="left-sidebar">
+            <div class="sidebar-title">게시판</div>
+            <ul class="sidebar-menu">
+                <li><a href="/board/boardlist?type=free">● 자유게시판</a></li>
+                <li><a href="/board/boardlist?type=notice">● 공지사항</a></li>
+                <li><a href="/board/boardlist?type=review">● 후기게시판</a></li>
+                <li><a href="/board/boardlist?type=qna">● QnA</a></li>
+                <li><a href="/board/boardlist?sort=like">● 추천순 모아보기</a></li>
+                <li><a href="/board/boardlist?sort=new">● 최신 게시글</a></li>
+                <li><a href="/mypage/articles">● 내가 쓴 글</a></li>
+            </ul>
+        </aside>
+
+        <!-- ▒▒ 중앙 내 글 컨텐츠 ▒▒ -->
+        <div class="board-wrapper">
+
+            <h2 class="title">내가 작성한 글</h2>
+
+            <div class="article-list">
+
+                <div th:each="b : ${articles}" class="article-item"
+                     th:onclick="|location.href='@{/board/boardview(idx=${b.idx})}'|">
+
+                    <div class="article-title" th:text="${b.title}"></div>
+
+                    <div class="article-meta">
+                        <span th:text="'작성일: ' + ${#dates.format(b.regdate,'yyyy-MM-dd')}"></span>
+                        <span th:text="'조회수: ' + ${b.views}"></span>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ▒▒ 우측 사이드바 ▒▒ -->
+        <aside class="right-sidebar">
+
+            <div class="sidebar-title">🔥 인기 검색어</div>
+
+            <ol class="popular-search-list">
+                <li th:each="s, stat : ${popularSearchList}">
+
+                    <!-- 1위 스타일 -->
+                    <a th:if="${stat.index == 0}"
+                       th:href="@{/search(keyword=${s.keyword})}"
+                       th:text="'🔥 ' + ${s.keyword} + ' (' + s.count + ')' "
+                       style="color:#e53935; font-weight:700; font-size:17px;">
+                    </a>
+
+                    <!-- 2위 스타일 -->
+                    <a th:if="${stat.index == 1}"
+                       th:href="@{/search(keyword=${s.keyword})}"
+                       th:text="'⭐ ' + ${s.keyword} + ' (' + s.count + ')' "
+                       style="color:#fb8c00; font-weight:600;">
+                    </a>
+
+                    <!-- 3위 이하 -->
+                    <a th:if="${stat.index > 1}"
+                       th:href="@{/search(keyword=${s.keyword})}"
+                       th:text="${s.keyword + ' (' + s.count + ')'}">
+                    </a>
+
+                </li>
+            </ol>
+
+
+        </aside>
+
+    </div>
+
+</div>
+</html>

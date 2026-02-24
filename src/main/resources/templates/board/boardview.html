@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainlayout}">
+
+<div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/Style.css}">
+    <style>
+        body {
+            /*bgimage.png 파일 경로: /image/bgimage.png */
+
+            background-size: cover;          /* 화면을 꽉 채우도록 설정 */
+            background-position: center;     /* 이미지를 중앙에 배치 */
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+    <div class="view-container">
+
+        <div th:if="${board != null}">
+
+            <div class="view-group">
+
+                <div class="view-title-row">
+                    <div class="view-title" th:text="${board.title}"></div>
+                    <div class="board-type-badge"
+                         th:text="${board.type.toUpperCase()}"
+                         th:classappend="${board.type}"></div>
+                </div>
+
+                <div class="view-info">
+                    <span th:text="|작성자: ${board.userid}|">작성자: user1</span>
+                    <span th:text="|작성일: ${board.regdate != null ? #dates.format(board.regdate, 'yyyy-MM-dd HH:mm') : '날짜 정보 없음'}|">작성일: 2025-10-21 13:00</span>
+                </div>
+            </div>
+
+            <div class="view-content">
+
+                <!--<th:block th:if="${fileInfo != null and fileInfo.newfilename != null}">
+
+                    <th:block th:if="${fileInfo.newfilename.toLowerCase().endsWith('.jpg') or
+                                       fileInfo.newfilename.toLowerCase().endsWith('.jpeg') or
+                                       fileInfo.newfilename.toLowerCase().endsWith('.png') or
+                                       fileInfo.newfilename.toLowerCase().endsWith('.gif')}">
+
+                        <img th:src="@{/image/display(fileIdx=${fileInfo.idx})}" alt="첨부 이미지"
+                             style="max-width: 100%; height: auto; display: block; border: 1px solid #eee;"/>
+                    </th:block>
+                </th:block>-->
+
+                <p th:utext="${board.content}"></p>
+            </div>
+
+           <!-- <div class="view-file" th:if="${fileInfo != null}">
+                첨부파일:
+                &lt;!&ndash;<a th:href="@{/board/download(fileIdx=${fileInfo.idx})}" th:text="${fileInfo.upfile}">첨부파일_이름.zip</a>&ndash;&gt;
+            </div>-->
+
+            <!-- 로그인한 회원의 member_idx -->
+            <input type="hidden" id="current-user-id" th:value="${currentUserId}">
+            <div class="like-section">
+
+                <button class="like-btn" id="like-btn" onclick="toggleLike('like')">
+                    👍 <span  id="like-count" th:text="${board.likeCount}"></span>
+                </button>
+
+                <button class="dislike-btn" id="dislike-btn" onclick="toggleLike('dislike')">
+                    👎 <span id="dislike-count" th:text="${board.dislikeCount}"></span>
+                </button>
+
+            </div>
+
+            <div class="button-group">
+                <a th:href="@{/board/boardlist}">
+                    <button type="button" class="btn-list">목록</button>
+                </a>
+
+                <th:block th:if="${board.userid == currentUserId}">
+                    <!-- 수정 버튼 -->
+                    <a th:href="@{/board/boardmodify(idx=${board.idx})}">
+                        <button type="button" class="btn-modify">수정</button>
+                    </a>
+
+                    <!-- 삭제 폼 및 버튼 -->
+                    <form th:action="@{/board/delete}" method="post" style="display:inline;" onsubmit="return confirm('정말로 삭제하시겠습니까?');">
+                        <input type="hidden" name="idx" th:value="${board.idx}" />
+                        <button type="submit" class="btn-delete">삭제</button>
+                    </form>
+                </th:block>
+            </div>
+
+            <div class="comment-section">
+                <h3>댓글</h3>
+
+                <!-- 댓글 작성 폼 -->
+                <div class="comment-form">
+                    <form id="comment-post-form" action="javascript:void(0);">
+                        <input type="hidden" name="boardIdx" th:value="${board.idx}" />
+                        <input type="hidden" name="userId" th:value="${currentUserId}" id="current-user-id-input"/>
+                        <textarea name="ment" placeholder="댓글을 입력하세요..." required></textarea>
+                        <button type="submit">등록</button>
+                        <div style="clear: both;"></div>
+                    </form>
+                </div>
+
+                <div id="comment-list-container" class="comment-list">
+                    <div class="text-center" style="color: #757575; padding: 15px;">
+                        <p>댓글을 불러오는 중...</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div th:if="${board == null}" class="text-center">
+            <p>해당 게시글을 찾을 수 없습니다.</p>
+            <a th:href="@{/board/boardlist}"><button type="button" class="btn-list">목록으로</button></a>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const BOARD_ID = [[${board.idx}]];
+        const CURRENT_USER_ID = [[${currentUserId}]];
+        const COMMENT_API_URL = '/api/coments';
+        const MEMBER_IDX = [[${currentMemberIdx}]];
+        /*]]>*/
+    </script>
+
+    <script th:src="@{/json/boardview.js}"></script>
+ </div>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainlayout}">
+
+<!-- content fragment 시작 -->
+<div layout:fragment="content">
+    <style>
+        body {
+            /*bgimage.png 파일 경로: /image/bgimage.png */
+            background-image: url("/image/bgimage.jpg");
+            background-size: cover;          /* 화면을 꽉 채우도록 설정 */
+            background-position: center;     /* 이미지를 중앙에 배치 */
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+<div>
+<div class="join-container">
+    <div class="join-form">
+        <img src="/image/logo.png" alt="Find Board Game 로고" class="logo-image">
+
+        <h2 class="form-title">회원 가입</h2>
+
+        <form action="/joinProcess" method="POST">
+
+            <div class="input-group">
+                <label for="userId">아이디</label>
+                <input type="text" id="userid" name="userid" required>
+            </div>
+
+            <div class="input-group">
+                <label for="userpwd">비밀번호</label>
+                <input type="password" id="userpwd" name="userpwd" required>
+            </div>
+
+            <div class="input-group">
+                <label for="userpwds">비밀번호 확인</label>
+                <input type="password" id="userpwds" name="userpwds" required>
+            </div>
+
+            <div class="input-group">
+                <label for="name">이름</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="input-group">
+                <label>성별</label>
+                <div class="gender-options"> <label for="gender-m" class="radio-label">
+                    <input type="radio" id="gender-m" name="gender" value="m"> 남
+                </label>
+                    <label for="gender-f" class="radio-label">
+                        <input type="radio" id="gender-f" name="gender" value="f"> 여
+                    </label>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>이메일</label>
+                <div class="email-input">
+                    <input type="text" id="emailprefix" name="emailprefix" required>
+                    <span>@</span>
+                    <input type="text" id="emaildomain" name="emaildomain" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>* 생년월일</label><br>
+                <div class="birth-selects">
+                    <select name="yy">
+                        <option value="">년도</option>
+                        <th:block th:with="currentYear=${#dates.year(#dates.createNow())}">
+                            <th:block th:each="y : ${#numbers.sequence(1950, currentYear)}">
+                                <option th:value="${y}" th:text="${y}"></option>
+                            </th:block>
+                        </th:block>
+                    </select>
+
+                    <select name="mm">
+                        <option value="">월</option>
+                        <th:block th:each="m : ${#numbers.sequence(1,12)}">
+                            <option th:value="${m < 10 ? '0' + m : m}" th:text="${m < 10 ? '0' + m : m}"></option>
+                        </th:block>
+                    </select>
+
+                    <select name="dd">
+                        <option value="">일</option>
+                        <th:block th:each="d : ${#numbers.sequence(1,31)}">
+                            <option th:value="${d < 10 ? '0' + d : d}" th:text="${d < 10 ? '0' + d : d}"></option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">완료</button>
+                <button type="button" class="btn btn-secondary" onclick="location.href='/'">취소</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+</html>

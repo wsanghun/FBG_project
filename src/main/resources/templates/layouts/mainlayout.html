@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${title}">메인 레이아웃</title>
+
+  <!-- ✅ 공용 CSS -->
+  <link rel="stylesheet" th:href="@{/css/layoutcss.css}">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+
+  <!-- 페이지별 CSS 삽입 -->
+  <th:block layout:fragment="css"></th:block>
+</head>
+
+<body>
+<div th:replace="~{fragments/headerfragment::header}"></div>
+
+<div class="main-content-wrapper">
+  <div class="main-content"
+       th:classappend="${pageType} == 'form' ? ' form-layout' : ' home-layout'"
+       layout:fragment="content">
+  </div>
+</div>
+
+<div class="main-footer text-center p-3"
+     style="box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);">
+  <p class="m-0">Copyright &copy; 2024 FIND BOARD GAME</p>
+</div>
+
+<!-- 페이지별 JS 삽입 -->
+<th:block layout:fragment="script"></th:block>
+</body>
+</html>

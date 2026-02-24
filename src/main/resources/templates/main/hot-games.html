@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hot Boardgames</title>
+</head>
+
+<body>
+<h1>🔥 Hot Board Games</h1>
+
+<ul>
+    <li th:each="g : ${hotGames}">
+        <img th:src="${g.thumbnail}" width="80">
+        <span th:text="${g.rank}"></span>.
+        <strong th:text="${g.name}"></strong>
+    </li>
+</ul>
+
+</body>
+</html>

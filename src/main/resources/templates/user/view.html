@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainlayout}">
+
+<th:block layout:fragment="content" th:with="pageType='home'">
+
+    <style>
+
+    body {
+        background-size: cover;          /* 화면을 꽉 채우도록 설정 */
+        background-position: center;     /* 이미지를 중앙에 배치 */
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+        margin: 0;
+        font-family: sans-serif;
+        flex-direction: column;
+    }
+
+
+        /* 모달 오버레이 (배경 어둡게 처리) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* 반투명 검은색 배경 */
+            display: none; /* 기본 숨김 */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* 모달 본체 */
+        .password-modal {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+        }
+
+        .password-modal input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .modal-buttons button {
+            padding: 8px 15px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-confirm {
+            background-color: #ff7f33; /* 주황색 계열 */
+            color: white;
+        }
+        .btn-cancel {
+            background-color: #6c757d; /* 회색 계열 */
+            color: white;
+        }
+    </style>
+    <div class="dashboard-wrapper">
+
+        <!-- 🔥 프로필 박스 -->
+        <div class="profile-box">
+
+            <form id="profile-upload-form"
+                  th:action="@{/user/uploadProfile}"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                <input type="hidden" name="userid" th:value="${member.userid}">
+
+                <label for="profile-input" class="profile-photo-wrapper">
+                    <img th:if="${member.profileImage != null}"
+                         th:src="${member.profileImage}"
+                         class="profile-photo profile-click">
+
+                    <div th:if="${member.profileImage == null}"
+                         class="profile-photo-default profile-click"
+                         th:text="${#strings.substring(member.userid,0,1)}"></div>
+                </label>
+
+                <input type="file" id="profile-input" name="file" accept="image/*" class="hidden-file-input">
+
+            </form>
+
+            <div class="profile-info">
+                <div class="profile-username" th:text="${member.userid}"></div>
+                <div class="profile-sub">내 프로필 관리</div>
+            </div>
+
+        </div>
+
+
+        <!-- 🔥 회원 정보 박스 -->
+        <div class="container member-view-container">
+
+            <h2 class="text-center mb-4">회원 상세 정보</h2>
+
+            <div class="member-info-group">
+
+                <div class="info-item">
+                    <div class="info-label">회원 번호</div>
+                    <div class="info-value" th:text="${member.idx}"></div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">아이디</div>
+                    <div class="info-value" th:text="${member.userid}"></div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">이름</div>
+                    <div class="info-value" th:text="${member.name}"></div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">이메일</div>
+                    <div class="info-value" th:text="${member.email}"></div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">성별</div>
+                    <div class="info-value">
+                        <span th:text="${member.gender != null and member.gender.toUpperCase() == 'M' ? '남성' : (member.gender != null and member.gender.toUpperCase() == 'F' ? '여성' : '미입력')}"></span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">생년월일</div>
+                    <div class="info-value" th:text="${member.birth}"></div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">가입일</div>
+                    <div class="info-value" th:text="${member.regdate != null ? #dates.format(member.regdate, 'yyyy-MM-dd HH:mm') : '정보 없음'}"></div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">등급 (Level)</div>
+                    <div class="info-value" th:text="${member.level}"></div>
+                </div>
+
+            </div>
+
+            <div class="member-buttons-wrapper">
+                <a th:href="@{/user/memberlist}" class="btn btn-list">목록</a>
+                <button class="btn btn-primary"
+                        th:onclick="|openPasswordModal('modify', ${member.idx})|">수정</button>
+                <button class="btn btn-danger"
+                        th:onclick="|openPasswordModal('delete', ${member.idx})|">삭제</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 모달 -->
+    <div id="passwordModalOverlay" class="modal-overlay">
+        <div class="password-modal">
+            <h5>본인 확인을 위해 비밀번호를 입력해주세요.</h5>
+            <input type="password" id="passwordInput" placeholder="비밀번호">
+            <div class="modal-buttons">
+                <button id="modalConfirmBtn" class="btn-confirm">확인</button>
+                <button id="modalCancelBtn" class="btn-cancel">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 파일 선택되면 자동 업로드
+        document.getElementById("profile-input").addEventListener("change", function () {
+            if (this.files.length > 0) {
+                document.getElementById("profile-upload-form").submit();
+            }
+        });
+
+        // 전역 변수로 현재 액션 타입과 회원 ID 저장
+        let currentActionType = '';
+        let currentMemberIdx = 0;
+
+        const modalOverlay = document.getElementById('passwordModalOverlay');
+        const passwordInput = document.getElementById('passwordInput');
+        const confirmBtn = document.getElementById('modalConfirmBtn');
+        const cancelBtn = document.getElementById('modalCancelBtn');
+
+        // 모달 열기 함수 (버튼의 onclick을 이 함수로 변경)
+        function openPasswordModal(actionType, idx) {
+            currentActionType = actionType;
+            currentMemberIdx = idx;
+            passwordInput.value = ''; // 필드 초기화
+            modalOverlay.style.display = 'flex'; // 모달 표시
+            passwordInput.focus(); // 입력 필드에 포커스
+        }
+
+        // 모달 닫기 함수
+        function closePasswordModal() {
+            modalOverlay.style.display = 'none'; // 모달 숨김
+        }
+
+        // 확인 버튼 클릭 이벤트 리스너
+        confirmBtn.onclick = function() {
+            // ⭐️ 기존 checkPassword 로직을 함수로 분리하여 호출 ⭐️
+            checkPassword(currentActionType, currentMemberIdx);
+        };
+
+        // 취소 버튼 클릭 이벤트 리스너
+        cancelBtn.onclick = function() {
+            closePasswordModal();
+        };
+
+        // ⭐️ 3. 기존 checkPassword 로직을 모달 제어에 맞게 수정 ⭐️
+        // (prompt() 대신 input 필드 값 사용 및 모달 닫기 추가)
+        function checkPassword(actionType, idx) {
+            const userPwd = passwordInput.value;
+
+            if (userPwd.trim() === '') {
+                alert('비밀번호가 입력되지 않았습니다.');
+                passwordInput.focus();
+                return;
+            }
+
+            closePasswordModal(); // 비밀번호를 입력했으므로 모달 닫기
+
+            const verificationUrl = '/user/verifyPassword';
+
+            fetch(verificationUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    idx: idx,
+                    userpwd: userPwd // 사용자가 입력한 비밀번호
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('네트워크 오류 또는 서버 응답 문제');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.verified) {
+                    alert('비밀번호 확인 완료.');
+
+                    if (actionType === 'modify') {
+                        location.href = `/user/modify?idx=${idx}`;
+                    } else if (actionType === 'delete') {
+                        if (confirm('정말로 회원을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                            location.href = `/user/delete_proc?idx=${idx}`;
+                        }
+                    }
+                } else {
+                    alert('비밀번호가 일치하지 않습니다.');
+                    // 비밀번호 불일치 시 다시 모달을 띄워 재입력을 유도할 수도 있습니다.
+                }
+            })
+            .catch(error => {
+                console.error('비밀번호 검증 중 오류 발생:', error);
+                alert('비밀번호 확인 중 오류가 발생했습니다. 다시 시도해 주세요.');
+            });
+        }
+    </script>
+
+</th:block>
+
+</html>
